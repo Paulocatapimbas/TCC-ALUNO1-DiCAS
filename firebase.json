@@ -1,0 +1,13 @@
+{
+    "rules": {
+      "version": "2",
+      "service": "firestore.googleapis.com",
+      "match": "/databases/{database}/documents",
+      "rules": {
+        "items": {
+          "allow read, write": "request.auth != null"
+        }
+      }
+    }
+  }
+  
