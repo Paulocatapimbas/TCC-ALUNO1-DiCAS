@@ -1,482 +1,269 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Achados e Perdidos</title>
-
+    <title>Firebase v10 Crud with Authentication</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            color: #333;
+        /* Existing styles */
+        label{
+            display: inline-block;
+            font-size: 16px;
+            font-family: Arial, Helvetica, sans-serif;
+            width: 110px;
         }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #3779dd;
-            color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        header h1 {
-            font-size: 24px;
-            margin: 0;
-        }
-
-        header img {
+        input, select{
+            width: 180px;
             height: 30px;
-        }
-
-        nav {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        nav a {
-            margin: 0 15px;
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .search-bar {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .search-bar input[type="text"] {
-            width: 80%;
-            max-width: 400px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
             font-size: 16px;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
-        .item-list {
-            padding: 20px;
+        button{
+            height: 30px;
+            width: 70px;
         }
 
-        .item {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: flex-start;
-            background-color: #fff;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.3s ease;
-        }
-
-        .item:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .item-details {
-            flex-grow: 1;
-        }
-
-        .item-details h3 {
-            margin: 0;
-            font-size: 18px;
-        }
-
-        .item button {
-            background-color: #666;
-            color: #fff;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-            align-self: flex-end;
-        }
-
-        .item button:hover {
-            background-color: #555;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .item-info {
-            display: none;
-            padding-top: 10px;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .footer {
-            margin-top: 10px;
-            text-align: center;
-            font-size: 14px;
-            color: #999;
-        }
-
-        /* Estilos específicos para a seção de cadastro */
-        .form-container {
-            display: none;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .form-container h1 {
-            font-size: 24px;
-            color: #000;
-        }
-
-        .form-container h2 {
-            font-size: 20px;
-            color: #3779dd;
-            margin-top: -10px;
-        }
-
-        .form-container form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .form-container form input[type="text"] {
-            width: 80%;
-            max-width: 300px;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        .form-container form button {
-            width: 80%;
-            max-width: 300px;
-            padding: 10px;
-            background-color: #3779dd;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-
-        .form-container form button:hover {
-            background-color: #2558b7;
-        }
-
-        .form-container .contact-info {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .form-container .contact-info a {
-            color: #3779dd;
-            text-decoration: none;
-        }
-
-        /* Estilos para a página de login */
-        .login-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-        }
-
-        .login-container h1 {
-            font-size: 24px;
+        /* New styles for authentication */
+        #auth-section {
             margin-bottom: 20px;
-            color: #3779dd;
-        }
-
-        .login-container form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .login-container form input[type="text"],
-        .login-container form input[type="password"] {
-            width: 100%;
-            max-width: 300px;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        .login-container form button {
-            width: 100%;
-            max-width: 300px;
-            padding: 10px;
-            background-color: #3779dd;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-
-        .login-container form button:hover {
-            background-color: #2558b7;
-        }
-
-        .login-container .error {
-            color: red;
-            margin-top: 10px;
-            font-size: 14px;
         }
     </style>
-
-    <!-- Firebase SDKs -->
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js"></script>
-    
-      
 </head>
-
 <body>
-    <!-- Página de Login -->
-    <div id="login-container" class="login-container">
-        <h1>Login</h1>
-        <form id="login-form">
-            <input type="text" id="username" placeholder="Nome de Usuário" required>
-            <input type="password" id="password" placeholder="Senha"   autocomplete="current-password" required>
-            <button type="submit">Entrar</button>
-            <div id="login-error" class="error"></div>
-        </form>
+    <!-- AUTHENTICATION SECTION -->
+    <div id="auth-section">
+        <h2>User Authentication</h2>
+        <label>Email:</label>
+        <input type="email" id="userEmail">
+        <br><br>
+        <label>Password:</label>
+        <input type="password" id="userPassword">
+        <br><br>
+        <button id="signUpBtn">Sign Up</button>
+        <button id="loginBtn">Login</button>
+        <button id="logoutBtn" style="display:none;">Logout</button>
     </div>
 
-    <!-- Conteúdo do site -->
-    <div id="site-content" style="display: none;">
-        <header>
-            <h1>Achados e Perdidos</h1>
-            <img src="logo_senai.png" alt="Logo SENAI">
-        </header>
-
-        <div class="search-bar">
-            <input type="text" placeholder="Pesquise o item perdido">
-        </div>
-
-        <nav>
-            <a id="home-link">Página Inicial</a>
-            <a id="register-link">Cadastrar Item Perdido</a>
-        </nav>
-
-        <div id="home-section" class="item-list">
-            <!-- Lista de itens cadastrados -->
-            <div id="item-list"></div>
-        </div>
-
-        <div id="form-section" class="form-container">
-            <h1>CADASTRAR ITEM PERDIDO</h1>
-            <h2>Formulario</h2>
-
-            <form id="item-form">
-                <input type="text" id="item-name" placeholder="Item Perdido" required>
-                <input type="text" id="item-location" placeholder="Local Encontrado" required>
-                <input type="text" id="item-description" placeholder="Descrição do item" required>
-                <!-- Image input removed -->
-                <button type="submit">Cadastrar</button>
-            </form>
-
-            <div class="contact-info">
-                <p>Contato</p>
-                <p>Endereço: Av. Jones dos Santos Neves, nº 975</p>
-                <p>Telefone: (28) 3515-8900</p>
-                <p>Email: <a href="mailto:contato@escola.com">contato@escola.com</a></p>
-            </div>
-        </div>
+    <!-- CRUD SECTION (Visible only when logged in) -->
+    <div id="crud-section" style="display:none;">
+        <!-- Existing CRUD HTML code -->
+        <label>Descricao do Item</label>
+        <input type="text" id="DescripItem">
+        <br><br>
+        <label>Possivel dono:</label>
+        <input type="text" id="OwnerItem">
+        <br><br>
+        <label>Tipo de Item</label>
+        <select id="DeptInp">
+            <option value="Caderno">Caderno</option>
+            <option value="Bolsa">Bolsa</option>
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Carteira">Carteira</option>
+        </select>
+        <br><br>
+        <label>Local Armazenado</label>
+        <select id="LocalInp">
+            <option value="Diretora">Diretora</option>
+            <option value="Portaria">Portaria</option>
+            <option value="Professor">Professor</option>
+            <option value="Armario">Armario</option>
+            <option value="Secretaria">Secretaria</option>
+        </select>
+        <br><br>
+        <label>N.º Identificador</label>
+        <input type="number" id="CnicInp">
+        <br><br>
+        <button id="AddBtn">Add</button>
+        <button id="RetrieveBtn">Retrieve</button>
+        <button id="UpdateBtn">Update</button>
+        <button id="RemoveBtn">Delete</button>
     </div>
 
     <script type="module">
-        // Importe os módulos necessários do Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
-        import { getFirestore,initializeFirestore, collection, addDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+        import { getDatabase, ref, child, get, set, update, remove } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 
-        // Configuração do Firebase
+        // Firebase configuration
         const firebaseConfig = {
-        apiKey: "AIzaSyDv3gRmq0IIt0Z8nSHiB5EmQnZvF-SsAvs",
-        authDomain: "james-49ebb.firebaseapp.com",
-        databaseURL: "https://james-49ebb-default-rtdb.firebaseio.com",
-        projectId: "james-49ebb",
-        storageBucket: "james-49ebb.appspot.com",
-        messagingSenderId: "652791022044",
-        appId: "1:652791022044:web:8b99fdea61e6d98b978f19",
-        measurementId: "G-BHWJ59XY41"
+            apiKey: "AIzaSyDv3gRmq0IIt0Z8nSHiB5EmQnZvF-SsAvs",
+            authDomain: "james-49ebb.firebaseapp.com",
+            databaseURL: "https://james-49ebb-default-rtdb.firebaseio.com",
+            projectId: "james-49ebb",
+            storageBucket: "james-49ebb.appspot.com",
+            messagingSenderId: "652791022044",
+            appId: "1:652791022044:web:8b99fdea61e6d98b978f19",
+            measurementId: "G-BHWJ59XY41"
         };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        
-        // Inicializar Firestore
-        const db = initializeFirestore(app,{
-        experimentalForceLongPolling: true, // this line
-        useFetchStreams: false, // and this line
-        })
-        
-        document.getElementById('item-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-        
-            // Obtenha os valores dos inputs
-            const itemName = document.getElementById('item-name').value;
-            const itemLocation = document.getElementById('item-location').value;
-            const itemDescription = document.getElementById('item-description').value;
-        
-            try {
-                // Adicione o item ao Firestore
-                await addDoc(collection(db, 'items'), {
-                    name: itemName,
-                    location: itemLocation,
-                    description: itemDescription,
-                    timestamp: serverTimestamp()
-                });
-                console.log('Item added successfully!');
-            } catch (error) {
-                console.error('Error adding item: ', error);
-            }
-        });
-    
-        const loginContainer = document.getElementById('login-container');
-        const siteContent = document.getElementById('site-content');
-        const loginForm = document.getElementById('login-form');
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        const loginError = document.getElementById('login-error');
-        const homeLink = document.getElementById('home-link');
-        const registerLink = document.getElementById('register-link');
-        const homeSection = document.getElementById('home-section');
-        const formSection = document.getElementById('form-section');
-        const itemForm = document.getElementById('item-form');
-        const itemList = document.getElementById('item-list');
-    
-        let userRole = null;
-    
-        // Função para autenticar o usuário
-        function authenticateUser(username, password) {
-            if (username === 'aluno' && password === 'senai123') {
-                userRole = 'aluno';
-                return true;
-            } else if (username === 'admin' && password === 'sesisenai123') {
-                userRole = 'admin';
-                return true;
-            }
-            return false;
-        }
-    
-        loginForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value.trim();
-    
-            if (authenticateUser(username, password)) {
-                loginContainer.style.display = 'none';
-                siteContent.style.display = 'block';
-    
-                if (userRole === 'aluno') {
-                    registerLink.style.display = 'none'; // Aluno não pode cadastrar
-                }
-    
-                // Fetch items from Firebase and display them
-                try {
-                    const querySnapshot = await getDocs(collection(db, 'items'));
-                    itemList.innerHTML = ""; // Clear the current list
-                    querySnapshot.forEach((doc) => {
-                        const data = doc.data();
-                        addItem(data.name, data.location, data.description);
-                    });
-                } catch (error) {
-                    console.error("Erro ao buscar itens: ", error);
-                }
-            } else {
-                loginError.textContent = 'Login ou senha errados';
-            }
-        });
-    
-        // Alternar entre a página inicial e o formulário de cadastro
-        homeLink.addEventListener('click', () => {
-            homeSection.style.display = 'block';
-            formSection.style.display = 'none';
-        });
-    
-        registerLink.addEventListener('click', () => {
-            homeSection.style.display = 'none';
-            formSection.style.display = 'block';
-        });
-    
-        // Mostrar a seção inicial por padrão
-        homeSection.style.display = 'block';
-        formSection.style.display = 'none';
-    
-        // Função para adicionar um novo item à lista
-        function addItem(name, location, description) {
-            const item = document.createElement('div');
-            item.classList.add('item');
-    
-            item.innerHTML = `
-                <div class="item-details">
-                    <h3>${name}</h3>
-                </div>
-                <button>Ver mais</button>
-                <div class="item-info">
-                    <p><strong>Descrição:</strong> ${description}</p>
-                    <p><strong>Local:</strong> ${location}</p>
-                </div>
-            `;
-    
-            item.querySelector('button').addEventListener('click', () => {
-                const info = item.querySelector('.item-info');
-                info.style.display = info.style.display === 'block' ? 'none' : 'block';
-            });
-    
-            itemList.appendChild(item);
-        }
-    
-        // Manipular o envio do formulário
-        itemForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-    
-            const name = document.getElementById('item-name').value;
-            const location = document.getElementById('item-location').value;
-            const description = document.getElementById('item-description').value;
-    
-            try {
-                // Enviar dados para Firebase
-                await addDoc(collection(db, 'items'), {
-                    name: name,
-                    location: location,
-                    description: description,
-                    timestamp: serverTimestamp()
-                });
-                alert('Item cadastrado com sucesso!');
-                itemForm.reset(); // Limpar o formulário após o envio
-                // Adicionar o novo item à lista sem recarregar
-                addItem(name, location, description);
-            } catch (error) {
-                console.error("Erro ao cadastrar item: ", error);
-            }
-        });
-    </script>
-    
-</body>
+        console.log("Firebase initialized:", app);
 
+        const auth = getAuth();
+        console.log("Firebase Auth initialized:", auth);
+
+        const db = getDatabase();
+        console.log("Firebase Database initialized:", db);
+
+        // DOM Elements
+        let userEmail = document.getElementById('userEmail');
+        let userPassword = document.getElementById('userPassword');
+        let signUpBtn = document.getElementById('signUpBtn');
+        let loginBtn = document.getElementById('loginBtn');
+        let logoutBtn = document.getElementById('logoutBtn');
+        let crudSection = document.getElementById('crud-section');
+        let authSection = document.getElementById('auth-section');
+
+        let DescripItem = document.getElementById('DescripItem');
+        let OwnerItem = document.getElementById('OwnerItem');
+        let DeptInp = document.getElementById('DeptInp');
+        let LocalInp = document.getElementById('LocalInp');
+        let CnicInp = document.getElementById('CnicInp');
+
+        let AddBtn = document.getElementById('AddBtn');
+        let RetrieveBtn = document.getElementById('RetrieveBtn');
+        let UpdateBtn = document.getElementById('UpdateBtn');
+        let RemoveBtn = document.getElementById('RemoveBtn');
+
+        // Sign Up User
+        signUpBtn.addEventListener('click', () => {
+            const email = userEmail.value;
+            const password = userPassword.value;
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    alert('User signed up successfully');
+                })
+                .catch((error) => {
+                    console.error("Error signing up:", error.code, error.message);
+                    alert(`Error signing up: ${error.message}`);
+                });
+        });
+
+        // Login User
+        loginBtn.addEventListener('click', () => {
+            const email = userEmail.value;
+            const password = userPassword.value;
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    alert('User logged in successfully');
+                })
+                .catch((error) => {
+                    console.error("Error logging in:", error.code, error.message);
+                    alert(`Error logging in: ${error.message}`);
+                });
+        });
+
+
+        // Logout User
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth).then(() => {
+                alert('User logged out');
+            }).catch((error) => {
+                console.log(error);
+                alert('Error logging out');
+            });
+        });
+
+        // Manage user state (login/logout)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                authSection.style.display = 'none';
+                crudSection.style.display = 'block';
+                logoutBtn.style.display = 'inline';
+            } else {
+                authSection.style.display = 'block';
+                crudSection.style.display = 'none';
+                logoutBtn.style.display = 'none';
+            }
+        });
+
+        // CRUD Operations (No change from your existing code)
+        function AddData() {
+            set(ref(db, 'ObjectSet/' + CnicInp.value), {
+                nameofobject: DescripItem.value,
+                nameofowner: OwnerItem.value,
+                department: DeptInp.value,
+                local: LocalInp.value,
+                cnic: Number(CnicInp.value)
+            });
+        }
+
+        function retData() {
+            const dbRef = ref(db);
+            const cnicValue = CnicInp.value;
+            const DescripItemValue = DescripItem.value;
+
+            if (cnicValue) {
+                // Try to retrieve by CNIC
+                get(child(dbRef, 'ObjectSet/' + cnicValue)).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        // Data found by CNIC
+                        DescripItem.value = snapshot.val().nameofobject;
+                        OwnerItem.value = snapshot.val().nameofowner;
+                        DeptInp.value = snapshot.val().department;
+                        LocalInp.value = snapshot.val().local;
+                    } else {
+                        alert("No data available for this CNIC");
+                    }
+                }).catch((error) => {
+                    alert("Error retrieving data");
+                    console.log(error);
+                });
+            } else if (DescripItemValue) {
+                // If no CNIC, search by description
+                get(child(dbRef, 'ObjectSet')).then((snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        let found = false;
+
+                        for (const key in data) {
+                            if (data[key].nameofobject === DescripItemValue) {
+                                DescripItem.value = data[key].nameofobject;
+                                OwnerItem.value = data[key].nameofowner;
+                                DeptInp.value = data[key].department;
+                                LocalInp.value = data[key].local;
+                                CnicInp.value = key; // set CNIC input with found key
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        if (!found) {
+                            alert("No data available for this description");
+                        }
+                    } else {
+                        alert("No data available");
+                    }
+                }).catch((error) => {
+                    alert("Error retrieving data");
+                    console.log(error);
+                });
+            } else {
+                alert("Please enter either CNIC or Description to retrieve data");
+            }
+        }
+
+        function UpdateData() {
+            update(ref(db, 'ObjectSet/' + CnicInp.value), {
+                nameofobject: DescripItem.value,
+                nameofowner: OwnerItem.value,
+                department: DeptInp.value,
+                local: LocalInp.value
+            });
+        }
+
+        function deleteData() {
+            remove(ref(db, 'ObjectSet/' + CnicInp.value));
+        }
+
+        AddBtn.addEventListener('click', AddData);
+        RetrieveBtn.addEventListener('click', retData);
+        UpdateBtn.addEventListener('click', UpdateData);
+        RemoveBtn.addEventListener('click', deleteData);
+    </script>
+</body>
 </html>
